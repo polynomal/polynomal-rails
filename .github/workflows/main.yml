@@ -1,4 +1,4 @@
-name: Ruby
+name: Polynomal-rails
 
 on: [push,pull_request]
 
@@ -11,8 +11,11 @@ jobs:
       uses: ruby/setup-ruby@v1
       with:
         ruby-version: 2.7.2
-    - name: Run the default task
+    - name: Setup gems
       run: |
-        gem install bundler -v 2.2.14
-        bundle install
-        bundle exec rake
+        gem install bundler
+        bundle install --jobs 4
+    - name: Run Standard
+      run: bundle exec standardb
+    - name: Run tests
+      run: bundle exec rspec
