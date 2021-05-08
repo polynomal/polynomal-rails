@@ -16,6 +16,6 @@ jobs:
         gem install bundler
         bundle install --jobs 4
     - name: Run Standard
-      run: bundle exec standardb
+      run: bundle exec standardrb
     - name: Run tests
       run: bundle exec rspec
