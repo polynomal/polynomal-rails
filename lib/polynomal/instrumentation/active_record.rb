@@ -25,37 +25,40 @@ module Polynomal
           end
         end
       end
-    end
 
-    def self.stop
-      if (thread = @thread)
-        thread.kill
-        @thread = nil
+      def self.stop
+        if (thread = @thread)
+          thread.kill
+          @thread = nil
+        end
       end
-    end
 
-    def collect
-      metrics = []
-      collect_active_record_pool_stats(metrics)
-      metrics
-    end
+      def initialize
+      end
 
-    def pid
-      @pid = ::Process.pid
-    end
+      def collect
+        metrics = []
+        collect_active_record_pool_stats(metrics)
+        metrics
+      end
 
-    def collect_active_record_pool_stats(accum)
-      ObjectSpace.each_object(::ActiveRecord::ConnectionAdapters::ConnectionPool) do |pool|
-        next if pool.connection.nil?
+      def pid
+        @pid = ::Process.pid
+      end
 
-        metric = {
-          pid: pid,
-          type: "active_record"
-          # hostname: ::Polynomal.config.hostname,
-          # metric_labels: labels(pool)
-        }
-        metric.merge!(pool.stat)
-        accum << metric
+      def collect_active_record_pool_stats(accum)
+        ObjectSpace.each_object(::ActiveRecord::ConnectionAdapters::ConnectionPool) do |pool|
+          next if pool.connections.nil?
+
+          metric = {
+            pid: pid,
+            type: "active_record"
+            # hostname: ::Polynomal.config.hostname,
+            # metric_labels: labels(pool)
+          }
+          metric.merge!(pool.stat)
+          accum << metric
+        end
       end
     end
   end

@@ -19,4 +19,5 @@ end
 
 require "polynomal/config"
 require "polynomal/client"
+require "polynomal/instrumentation"
 require "polynomal/version"
