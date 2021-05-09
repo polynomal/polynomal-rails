@@ -19,7 +19,7 @@ module Polynomal
             metrics = active_record_collector.collect
             metrics.each { |metric| client.send_json(metric) }
           rescue => e
-            $stderr.puts("Polynomal failed to collect process stats #{e}")
+            $stderr.warn("Polynomal failed to collect process stats #{e}")
           ensure
             sleep(frequency)
           end
