@@ -1,0 +1,5 @@
+format: progress
+
+ignore:
+  - '**/*':
+    - Style/StderrPuts
