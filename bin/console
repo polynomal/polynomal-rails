@@ -4,12 +4,11 @@
 require "bundler/setup"
 require "polynomal"
 
-# You can add fixtures and/or initialization code here to make experimenting
-# with your gem easier. You can also use a different console, if you like.
+Polynomal.configure do |config|
+  config.host = "http://localhost/api/v1/metrics"
+  config.port = "3000"
+  config.max_queue_size = 50
+end
 
-# (If you use this, don't forget to add pry to your Gemfile!)
-# require "pry"
-# Pry.start
-
-require "irb"
-IRB.start(__FILE__)
+require "pry"
+Pry.start

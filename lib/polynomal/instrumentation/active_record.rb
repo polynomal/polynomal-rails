@@ -3,9 +3,14 @@
 module Polynomal
   module Instrumentation
     class ActiveRecord
-      def self.start(client: nil, frequency: 30)
+      def self.start(client: nil, frequency_in_sec: 30)
+        unless defined?(::ActiveRecord)
+          $stderr.puts("ActiveRecord is not defined, assuming it is not loaded")
+          return
+        end
+
         unless ::ActiveRecord::Base.connection_pool.respond_to?(:stat)
-          $stderr.warn("ActiveRecord connection_pool.stat not supported in this rails version")
+          $stderr.puts("ActiveRecord connection_pool.stat not supported in this rails version")
           return
         end
 
@@ -16,12 +21,11 @@ module Polynomal
 
         @thread = Thread.new do
           loop do
-            metrics = active_record_collector.collect
-            metrics.each { |metric| client.send_json(metric) }
+            active_record_collector.collect.each { |metric| client.send(metric) }
           rescue => e
-            $stderr.warn("Polynomal failed to collect process stats #{e}")
+            $stderr.puts("Polynomal failed to collect process stats #{e}")
           ensure
-            sleep(frequency)
+            sleep(frequency_in_sec)
           end
         end
       end
@@ -31,9 +35,6 @@ module Polynomal
           thread.kill
           @thread = nil
         end
-      end
-
-      def initialize
       end
 
       def collect
@@ -50,12 +51,7 @@ module Polynomal
         ObjectSpace.each_object(::ActiveRecord::ConnectionAdapters::ConnectionPool) do |pool|
           next if pool.connections.nil?
 
-          metric = {
-            pid: pid,
-            type: "active_record"
-            # hostname: ::Polynomal.config.hostname,
-            # metric_labels: labels(pool)
-          }
+          metric = {type: "active_record"}
           metric.merge!(pool.stat)
           accum << metric
         end
