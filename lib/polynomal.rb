@@ -22,7 +22,7 @@ module Polynomal
       @client ||= Polynomal::Client.default
     end
 
-    def start_ruby_instrumentation
+    def start_ruby_instrumentation!
       instrumentation_mediator.start_ruby_instrumentation
     end
 
