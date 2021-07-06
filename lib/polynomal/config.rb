@@ -10,13 +10,14 @@ module Polynomal
     DEFAULT_THREAD_SLEEP_DURATION = 0.5
 
     attr_reader :max_queue_size
-    attr_accessor :host, :port, :thread_sleep_duration
+
+    attr_accessor :api, :thread_sleep_duration, :api_key, :application
 
     def initialize
-      @host = DEFAULT_HOST
-      @port = DEFAULT_PORT
       @max_queue_size = DEFAULT_MAX_QUEUE_SIZE
       @thread_sleep_duration = DEFAULT_THREAD_SLEEP_DURATION
+      @api = Api.new(host: DEFAULT_HOST, port: DEFAULT_PORT)
+      @application = Application.new
     end
 
     def max_queue_size=(size)
@@ -27,14 +28,23 @@ module Polynomal
       @max_queue_size = size ? size.to_i : DEFAULT_MAX_QUEUE_SIZE
     end
 
-    def hostname
-      @hostname ||=
-        begin
-          Socket.gethostname
-        rescue => e
-          $stderr.puts("Unable to lookup hostname: #{e}")
-          "unknown-host"
-        end
+    class Api
+      attr_accessor :host, :port, :key
+
+      def initialize(host:, port:, key: nil)
+        @host = host
+        @port = port
+        @key = key
+      end
+    end
+
+    class Application
+      attr_accessor :name, :environment
+
+      def initialize(name: nil, environment: nil)
+        @name = name
+        @environment = environment
+      end
     end
   end
 end

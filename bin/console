@@ -5,9 +5,11 @@ require "bundler/setup"
 require "polynomal"
 
 Polynomal.configure do |config|
-  config.host = "http://localhost/api/v1/metrics"
-  config.port = "3000"
-  config.max_queue_size = 50
+  config.api.host = "http://localhost/api/v1/metrics"
+  config.api.port = 3000
+  config.api.key = "foobar_key"
+  config.application.name = "Polynomal"
+  config.application.environment = "production"
 end
 
 require "pry"

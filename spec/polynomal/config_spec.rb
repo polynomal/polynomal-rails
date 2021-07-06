@@ -3,54 +3,68 @@
 require "spec_helper"
 
 RSpec.describe Polynomal::Config do
-  describe ".host" do
-    it "should return the default host" do
-      expect(Polynomal::Config.new.host).to eq(Polynomal::Config::DEFAULT_HOST)
-    end
-  end
+  let(:config) { Polynomal::Config.new }
 
-  describe ".port" do
-    it "should return the default port" do
-      expect(Polynomal::Config.new.port).to eq(Polynomal::Config::DEFAULT_PORT)
-    end
-  end
+  describe ".api" do
+    it { expect(config.api).to be_an_instance_of(Polynomal::Config::Api) }
 
-  describe ".host=" do
-    let(:instance) { described_class.new }
-    let(:new_value) { "example.com" }
-    before { instance.host = new_value }
+    describe ".host" do
+      context "when using the default host" do
+        it { expect(config.api.host).to eq(Polynomal::Config::DEFAULT_HOST) }
+      end
 
-    context "when the host is set to a non-default value" do
-      it "should return the new value" do
-        expect(instance.host).to eq(new_value)
+      context "when using a non-default host" do
+        before { config.api.host = "foobar.example.com" }
+
+        it { expect(config.api.host).to eq("foobar.example.com") }
       end
     end
 
-    context "when the host is set to nil" do
-      let(:new_value) { nil }
+    describe ".host=" do
+      before { config.api.host = "foobar.example.com" }
 
-      it "should set the value to nil" do
-        expect(instance.host).to eq(nil)
-      end
-    end
-  end
-
-  describe ".port=" do
-    let(:instance) { described_class.new }
-    let(:new_value) { 80 }
-    before { instance.port = new_value }
-
-    context "when the port is set to a non-default value" do
-      it "should return the new value" do
-        expect(instance.port).to eq(new_value)
+      it "should set and return the new value" do
+        expect(config.api.host).to eq("foobar.example.com")
       end
     end
 
-    context "when the port is set to nil" do
-      let(:new_value) { nil }
+    describe ".port" do
+      context "when using the default host" do
+        it { expect(config.api.port).to eq(Polynomal::Config::DEFAULT_PORT) }
+      end
 
-      it "should set the value to nil" do
-        expect(instance.port).to eq(nil)
+      context "when using a non-default port" do
+        before { config.api.port = 8080 }
+
+        it { expect(config.api.port).to eq(8080) }
+      end
+    end
+
+    describe ".port=" do
+      before { config.api.port = 8080 }
+
+      it "should set and return the new value" do
+        expect(config.api.port).to eq(8080)
+      end
+    end
+
+    describe ".key" do
+      context "when using the default api_key" do
+        it { expect(config.api.key).to eq(nil) }
+      end
+
+      context "when using a non-default api_key" do
+        before { config.api.key = "secret_api_key" }
+
+        it { expect(config.api.key).to eq("secret_api_key") }
+      end
+    end
+
+    describe ".api_key=" do
+      before { config.api.key = "secret_api_key" }
+
+      it "should set and return the new value" do
+        expect(config.api.key).to eq("secret_api_key")
       end
     end
   end
