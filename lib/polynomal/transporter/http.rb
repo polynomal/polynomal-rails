@@ -6,18 +6,13 @@ require "uri"
 module Polynomal
   module Transporter
     class HTTP
-      def initialize(config: Polynomal.config)
-        @host = config.api.host
-        @port = config.api.port
+      def initialize(host: Polynomal.config.api.host, port: Polynomal.config.api.port)
+        @host = host
+        @port = port
       end
 
       def transport(payload)
-        request_body = {
-          application: {name: "Polynomal", environment: "production"},
-          metric: payload
-        }
-
-        http_client.request(post(request_body))
+        http_client.request(post(payload))
       end
 
       private
@@ -26,6 +21,7 @@ module Polynomal
         Net::HTTP::Post.new(uri.request_uri).tap do |request|
           request.body = payload.to_json
           request["Content-Type"] = "application/json"
+          request["Authorization"] = bearer_token_with_api_key
         end
       end
 
@@ -42,6 +38,10 @@ module Polynomal
       def port
         return @port if !@port.nil? && @port.is_a?(Integer)
         uri.port
+      end
+
+      def bearer_token_with_api_key
+        "Bearer " + Polynomal.config.api.key
       end
     end
   end
