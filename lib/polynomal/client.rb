@@ -23,6 +23,7 @@ module Polynomal
 
     def send(obj)
       @queue << obj
+
       if @queue.length > @max_queue_size
         $stderr.puts("Polynomal::Client is dropping a message due to a full queue")
         @queue.pop
@@ -34,8 +35,10 @@ module Polynomal
     def process_queue
       while @queue.length > 0
         begin
-          message = @queue.pop
-          # Utilize {Polynomal::Transporter} class to send to the API
+          message = {
+            application: Polynomal.config.application.to_h,
+            metric: @queue.pop
+          }
           @transporter.transport(message)
         rescue => e
           $stderr.puts("Polynomal is dropping a message: #{e}")
