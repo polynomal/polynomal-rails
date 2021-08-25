@@ -24,6 +24,50 @@ RSpec.describe Polynomal do
     end
   end
 
+  describe ".client" do
+    it "should return an instance of Polynomal::Client" do
+      expect(Polynomal.client).to be_an_instance_of(Polynomal::Client)
+    end
+  end
+
+  describe ".start_ruby_instrumentation!" do
+    let(:instrumentation_mediator) { instance_double("InstrumentationMediator") }
+
+    before do
+      allow(Polynomal::InstrumentationMediator)
+        .to receive(:new)
+        .and_return(instrumentation_mediator)
+    end
+
+    after do
+      Polynomal.instance_variable_set("@collector", nil)
+    end
+
+    it "should delegate to the Polynomal::InstrumentationMediator instance" do
+      expect(instrumentation_mediator).to receive(:start_ruby_instrumentation)
+      Polynomal.start_ruby_instrumentation!
+    end
+  end
+
+  describe ".start_rails_instrumentation!" do
+    let(:instrumentation_mediator) { instance_double("InstrumentationMediator") }
+
+    before do
+      allow(Polynomal::InstrumentationMediator)
+        .to receive(:new)
+        .and_return(instrumentation_mediator)
+    end
+
+    after do
+      Polynomal.instance_variable_set("@collector", nil)
+    end
+
+    it "should delegate to the Polynomal::InstrumentationMediator instance" do
+      expect(instrumentation_mediator).to receive(:start_ruby_instrumentation)
+      Polynomal.start_ruby_instrumentation!
+    end
+  end
+
   it "has a version number" do
     expect(Polynomal::VERSION).not_to be nil
   end

@@ -1,38 +1,90 @@
-# Polynomal::Rails
+# Polynomal for Rails
 
-Welcome to your new gem! In this directory, you'll find the files you need to be able to package up your Ruby library into a gem. Put your Ruby code in the file `lib/polynomal/rails`. To experiment with that code, run `bin/console` for an interactive prompt.
+[Polynomal](https://www.polynomal.com) makes it easy for you to capture, query, and analyze your application metrics. Let us handle the metrics so you can focus on writing code.
 
-TODO: Delete this and the text above, and describe your gem
+## Description
+
+The Polynomal gem aggregates and collects custom metrics in addition to metrics from multiple processes such as Sidekiq, Ruby Garbage Collection, ActiveRecord, ActionView, and more. Metrics are exported to Polynomal where they can be graphed, analyzed, and acted on.
 
 ## Installation
 
-Add this line to your application's Gemfile:
+First, sign up for a Polynomal account and add the `polynomal-rails` gem to your Gemfile.
 
 ```ruby
+# Gemfile
 gem 'polynomal-rails'
 ```
 
-And then execute:
+Then run:
 
     $ bundle install
 
-Or install it yourself as:
-
-    $ gem install polynomal-rails
+>  [TODO: Docs for API key config]
 
 ## Usage
 
-TODO: Write usage instructions here
+### Process metrics
+
+Polynomal automatically captures and collects all process metrics from your application. No additional config is needed here.
+
+```ruby
+# config/initializers/polynomal.rb
+
+# [TODO: Polynomal config setup]
+```
+
+### Custom metrics
+
+If you want to capture and collect a custom metric you can add custom [...] anywhere in your code.
+
+```ruby
+# Simple increment
+Polynomal.increment("users.sign_ups")
+
+# Simple count
+Polynomal.count("users.batch_delete_size", 200)
+
+# Simple measure
+Polynomal.measure("invoices.csv_generation_duration") do
+  # ...
+end
+```
+
+ Read more about custom metrics in our documentation.
 
 ## Development
 
-After checking out the repo, run `bin/setup` to install dependencies. Then, run `rake spec` to run the tests. You can also run `bin/console` for an interactive prompt that will allow you to experiment.
+### Installation
 
-To install this gem onto your local machine, run `bundle exec rake install`. To release a new version, update the version number in `version.rb`, and then run `bundle exec rake release`, which will create a git tag for the version, push git commits and the created tag, and push the `.gem` file to [rubygems.org](https://rubygems.org).
+Make sure you have Bundler installed and then use the bin stub to install all possible dependencies.
+
+```
+# Install Bundler (optional)
+$ gem install bundler
+
+# Install the Polynomal gem via the bin stub
+$ ./bin/setup
+```
+
+### Testing
+
+`polynomal-rails` uses [Appraisals](https://github.com/thoughtbot/appraisal) for running specs. Appraisals enables us to test the gem against different versions of Rails. Currently we test against the following Rails versions: `5.2, 6.0, 6.1`.
+
+Instead of running the standard `bundle exec rspec`, run:
+
+```
+$ bundle exec appraisal rspec
+```
+
+This will test the gem against all the Gemfiles under the `Gemfiles/` dir.
+
+### Versioning
+
+To release a new version, update the version number in `version.rb`, and then run `bundle exec rake release`, which will create a git tag for the version, push git commits and the created tag, and push the `.gem` file to [rubygems.org](https://rubygems.org).
 
 ## Contributing
 
-Bug reports and pull requests are welcome on GitHub at https://github.com/[USERNAME]/polynomal-rails.
+Bug reports and pull requests are welcome on GitHub at https://github.com/jlholm/polynomal-rails.
 
 ## License
 
