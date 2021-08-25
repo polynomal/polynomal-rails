@@ -1,7 +1,5 @@
 # frozen_string_literal: true
 
-require "socket"
-
 module Polynomal
   class Config
     DEFAULT_HOST = "https://www.polynomal.com/api"
@@ -44,6 +42,17 @@ module Polynomal
       def initialize(name: nil, environment: nil)
         @name = name
         @environment = environment
+      end
+
+      def valid?
+        !(name.nil? || name.empty?) && !(environment.nil? || environment.empty?)
+      end
+
+      def to_h
+        @to_h ||= {
+          name: name,
+          environment: environment
+        }
       end
     end
   end
