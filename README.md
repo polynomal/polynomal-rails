@@ -4,7 +4,7 @@
 
 ## Description
 
-The Polynomal gem aggregates and collects custom metrics in addition to metrics from multiple processes. Metrics are exported to Polynomal where they can be graphed, analyzed, and acted on.
+The Polynomal gem aggregates and collects custom metrics in addition to metrics from multiple processes such as Sidekiq, Ruby Garbage Collection, ActiveRecord, ActionView, and more. Metrics are exported to Polynomal where they can be graphed, analyzed, and acted on.
 
 ## Installation
 
@@ -30,7 +30,7 @@ Polynomal automatically captures and collects all process metrics from your appl
 ```ruby
 # config/initializers/polynomal.rb
 
-Polynomal.client.collect
+# [TODO: Polynomal config setup]
 ```
 
 ### Custom metrics
