@@ -35,8 +35,8 @@ module Polynomal
       client.send(datagram)
     end
 
-    def increment(name, value = 1)
-      datagram = Polynomal::Datagram.build(name, value, "increment")
+    def increment(name)
+      datagram = Polynomal::Datagram.build(name, 1, "increment")
       client.send(datagram)
     end
 

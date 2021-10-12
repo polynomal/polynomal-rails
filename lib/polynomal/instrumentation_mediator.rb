@@ -7,7 +7,9 @@ module Polynomal
       @rails_instrumentation = []
 
       register_ruby_instrumentation(Polynomal::Instrumentation::GarbageCollection)
-      register_rails_instrumentation(Polynomal::Instrumentation::ActiveRecord)
+
+      # TODO: Disabled for now, needs fixing
+      # register_rails_instrumentation(Polynomal::Instrumentation::ActiveRecord)
     end
 
     def start_ruby_instrumentation
