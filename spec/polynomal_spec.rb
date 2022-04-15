@@ -30,41 +30,29 @@ RSpec.describe Polynomal do
     end
   end
 
-  describe ".start_ruby_instrumentation!" do
-    let(:instrumentation_mediator) { instance_double("InstrumentationMediator") }
+  describe ".start_ruby_collectors" do
+    let(:collector) { instance_double("Polynomal::Collector") }
 
     before do
-      allow(Polynomal::InstrumentationMediator)
-        .to receive(:new)
-        .and_return(instrumentation_mediator)
+      allow(Polynomal::Collector).to receive(:new).and_return(collector)
     end
 
-    after do
-      Polynomal.instance_variable_set("@collector", nil)
-    end
-
-    it "should delegate to the Polynomal::InstrumentationMediator instance" do
-      expect(instrumentation_mediator).to receive(:start_ruby_instrumentation)
-      Polynomal.start_ruby_instrumentation!
+    it "should delegate to the Polynomal::Collector instance" do
+      expect(Polynomal.send(:collector)).to receive(:start_ruby_collectors)
+      Polynomal.start_ruby_collectors
     end
   end
 
-  describe ".start_rails_instrumentation!" do
-    let(:instrumentation_mediator) { instance_double("InstrumentationMediator") }
+  describe ".start_rails_collectors" do
+    let(:collector) { instance_double("Polynomal::Collector") }
 
     before do
-      allow(Polynomal::InstrumentationMediator)
-        .to receive(:new)
-        .and_return(instrumentation_mediator)
-    end
-
-    after do
-      Polynomal.instance_variable_set("@collector", nil)
+      allow(Polynomal::Collector).to receive(:new).and_return(collector)
     end
 
     it "should delegate to the Polynomal::InstrumentationMediator instance" do
-      expect(instrumentation_mediator).to receive(:start_ruby_instrumentation)
-      Polynomal.start_ruby_instrumentation!
+      expect(Polynomal.send(:collector)).to receive(:start_rails_collectors)
+      Polynomal.start_rails_collectors
     end
   end
 

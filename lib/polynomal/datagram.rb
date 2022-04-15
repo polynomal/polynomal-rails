@@ -17,9 +17,9 @@ module Polynomal
       def generate_generic_datagram(name, value, type)
         {
           timestamp: Time.now.utc.to_i,
-          type: type,
           name: normalize_name(name),
-          value: value
+          value: value,
+          tags: {type: type}
         }
       end
     end

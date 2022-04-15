@@ -1,16 +1,22 @@
 #!/usr/bin/env ruby
 # frozen_string_literal: true
 
+require "pry"
 require "bundler/setup"
 require "polynomal"
+require "logger"
 
 Polynomal.configure do |config|
-  config.api.host = "http://localhost/api/v1/metrics"
+  config.api.key = "m1d0I330Y5B84Klm79NZeA"
+  config.api.host = "http://localhost"
   config.api.port = 3000
-  config.api.key = "test_key"
-  config.application.name = "Polynomal"
-  config.application.environment = "production"
+
+  # config.application.name = "Polynomal"
+  # config.application.environment = "production"
+
+  config.thread_sleep_duration = 1
+  config.max_queue_size = 5
+  config.flush_data_on_exit = true
 end
 
-require "pry"
 Pry.start

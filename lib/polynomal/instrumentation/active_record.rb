@@ -3,37 +3,42 @@
 module Polynomal
   module Instrumentation
     class ActiveRecord
-      def self.start(client: nil, frequency_in_sec: 30)
-        unless defined?(::ActiveRecord)
-          $stderr.puts("ActiveRecord is not defined, assuming it is not loaded")
-          return
-        end
+      @thread = nil unless defined?(@thread)
 
-        unless ::ActiveRecord::Base.connection_pool.respond_to?(:stat)
-          $stderr.puts("ActiveRecord connection_pool.stat not supported in this rails version")
-          return
-        end
+      class << self
+        def start(client: nil, frequency_in_sec: 5)
+          client ||= Polynomal::Client.instance
 
-        active_record_collector = new
-        client ||= Polynomal::Client.default
+          unless defined?(::ActiveRecord)
+            Polynomal.logger.info("ActiveRecord is not defined, assuming it is not loaded")
+            return
+          end
 
-        stop if @thread
+          unless ::ActiveRecord::Base.connection_pool.respond_to?(:stat)
+            Polynomal.logger.warn("ActiveRecord connection_pool.stat not supported in this rails version")
+            return
+          end
 
-        @thread = Thread.new do
-          loop do
-            active_record_collector.collect.each { |metric| client.send(metric) }
-          rescue => e
-            $stderr.puts("Polynomal failed to collect process stats #{e}")
-          ensure
-            sleep(frequency_in_sec)
+          collector = new
+
+          kill_existing_thread if @thread
+
+          @thread = Thread.new do
+            loop do
+              collector.collect.each { |metric| client.send(metric) }
+            rescue => e
+              $stderr.puts("failed to collect process stats: #{e}")
+            ensure
+              sleep(frequency_in_sec)
+            end
           end
         end
-      end
 
-      def self.stop
-        if (thread = @thread)
-          thread.kill
-          @thread = nil
+        def kill_existing_thread
+          if (thread = @thread)
+            thread.kill
+            @thread = nil
+          end
         end
       end
 
@@ -41,10 +46,6 @@ module Polynomal
         metrics = []
         collect_active_record_pool_stats(metrics)
         metrics
-      end
-
-      def pid
-        @pid = ::Process.pid
       end
 
       def collect_active_record_pool_stats(accum)
