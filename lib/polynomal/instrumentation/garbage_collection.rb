@@ -5,36 +5,34 @@ module Polynomal
     class GarbageCollection
       @thread = nil unless defined?(@thread)
 
-      def self.start(client: nil, frequency_in_sec: 5)
-        process_collector = new
+      class << self
+        def start(client: nil, frequency_in_sec: 5)
+          kill_existing_thread if @thread
 
-        stop if @thread
+          collector = new
 
-        @thread = Thread.new do
-          loop do
-            process_collector.collect
-          rescue => e
-            $stderr.puts("Polynomal failed to collect process stats #{e}")
-          ensure
-            sleep(frequency_in_sec)
+          @thread = Thread.new do
+            loop do
+              collector.collect
+            rescue => e
+              Polynomal.logger.warn("failed to collect process stats: #{e}")
+            ensure
+              sleep(frequency_in_sec)
+            end
           end
         end
-      end
 
-      def self.stop
-        if (thread = @thread)
-          thread.kill
-          @thread = nil
+        def kill_existing_thread
+          if (thread = @thread)
+            thread.kill
+            @thread = nil
+          end
         end
       end
 
       def collect
         collect_gc_stats
         nil
-      end
-
-      def pid
-        @pid = ::Process.pid
       end
 
       def collect_gc_stats

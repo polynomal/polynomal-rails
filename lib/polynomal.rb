@@ -1,15 +1,27 @@
 # frozen_string_literal: true
 
+require "forwardable"
+
+require "polynomal/config"
+require "polynomal/client"
+require "polynomal/collector"
+require "polynomal/version"
+
 module Polynomal
   class << self
-    ##
-    # Configuration for Polynomal, use like:
-    #
-    #   Polynomal.configure do |config|
-    #     config.host = "https://www.example.com"
-    #     config.port = 443
-    #     config.max_queue_size = 100
-    #   end
+    extend Forwardable
+
+    def_delegators :client,
+      :count,
+      :increment
+
+    def_delegators :collector,
+      :start_ruby_collectors,
+      :start_rails_collectors
+
+    def_delegators :config,
+      :logger
+
     def configure
       yield config
     end
@@ -19,38 +31,31 @@ module Polynomal
     end
 
     def client
-      @client ||= Polynomal::Client.default
+      @client ||= Polynomal::Client.instance
     end
 
-    def start_ruby_instrumentation!
-      instrumentation_mediator.start_ruby_instrumentation
+    def install_at_exit_callback
+      return unless config.flush_data_on_exit
+
+      at_exit do
+        Polynomal.stop
+      end
     end
 
-    def start_rails_instrumentation!
-      instrumentation_mediator.start_rails_instrumentation
+    def stop(force: false)
+      client.shutdown(force: force)
+      true
     end
 
-    def count(name, value = 1)
-      datagram = Polynomal::Datagram.build(name, value, "count")
-      client.send(datagram)
-    end
+    protected
 
-    def increment(name)
-      datagram = Polynomal::Datagram.build(name, 1, "increment")
-      client.send(datagram)
-    end
-
-    private
-
-    def instrumentation_mediator
-      @collector ||= Polynomal::InstrumentationMediator.new
+    def collector
+      @collector ||= Polynomal::Collector.new
     end
   end
 end
 
-require "polynomal/config"
-require "polynomal/client"
-require "polynomal/datagram"
-require "polynomal/instrumentation_mediator"
-require "polynomal/railtie" if defined?(Rails)
-require "polynomal/version"
+Polynomal.install_at_exit_callback
+
+require "polynomal/initializer/rails" if defined?(::Rails::Railtie)
+require "polynomal/initializer/ruby"

@@ -3,9 +3,9 @@
 require "spec_helper"
 
 RSpec.describe Polynomal::Client do
-  describe ".default" do
+  describe ".instance" do
     it "should return the default client instance" do
-      expect(described_class.default).to be_an_instance_of(Polynomal::Client)
+      expect(described_class.instance).to be_an_instance_of(Polynomal::Client)
     end
   end
 

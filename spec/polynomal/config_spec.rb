@@ -10,7 +10,7 @@ RSpec.describe Polynomal::Config do
 
     describe ".host" do
       context "when using the default host" do
-        it { expect(config.api.host).to eq(Polynomal::Config::DEFAULT_HOST) }
+        it { expect(config.api.host).to eq(Polynomal::Config::DEFAULTS[:host]) }
       end
 
       context "when using a non-default host" do
@@ -30,7 +30,7 @@ RSpec.describe Polynomal::Config do
 
     describe ".port" do
       context "when using the default host" do
-        it { expect(config.api.port).to eq(Polynomal::Config::DEFAULT_PORT) }
+        it { expect(config.api.port).to eq(Polynomal::Config::DEFAULTS[:port]) }
       end
 
       context "when using a non-default port" do
